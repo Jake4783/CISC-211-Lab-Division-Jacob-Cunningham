@@ -2,12 +2,10 @@
 /* Tell the assembler to allow both 16b and 32b extended Thumb instructions */
 .syntax unified
 
-#include <xc.h>
-
 /* Tell the assembler that what follows is in data memory    */
 .data
 .align
-@ Define the globals so that the C code can access them
+/* Define the globals so that the C code can access them */
 /* define and initialize global variables that C can access */
 /* create a string */
 .global nameStr
@@ -74,24 +72,18 @@ asmFunc:
     push {r4-r11,LR}
  
     
-    /** note to profs: asmFunc.s solution is in Canvas at:
-     *    Canvas Files->
-     *        Lab Files and Coding Examples->
-     *            Lab 5 Division
-     * Use it to test the C test code */
-    
     /*** STUDENTS: Place your code BELOW this line!!! **************/
 
     
     /*** STUDENTS: Place your code ABOVE this line!!! **************/
 
 done:    
-    /* restore the caller's registers, as required by the 
-     * ARM calling convention 
-     */
     mov r0,r0 /* these are do-nothing lines to deal with IDE mem display bug */
     mov r0,r0 /* this is a do-nothing line to deal with IDE mem display bug */
 
+    /* restore the caller's registers, as required by the 
+     * ARM calling convention 
+     */
 screen_shot:    pop {r4-r11,LR}
 
     mov pc, lr	 /* asmFunc return to caller */
