@@ -12,7 +12,7 @@
 .type nameStr,%gnu_unique_object
     
 /*** STUDENTS: Change the next line to your name!  **/
-nameStr: .asciz "Inigo Montoya"  
+nameStr: .asciz "Jacob Cunningham"  
 
 .align   /* realign so that next mem allocations are on word boundaries */
  
@@ -71,8 +71,91 @@ asmFunc:
     /* save the caller's registers, as required by the ARM calling convention */
     push {r4-r11,LR}
  
+    /*inputs to asm code:
+r0:  dividend
+r1:  divisor 
+
+r0: store the address of quotient in r0 before returning to the C code.
+     
+dividend: output; memory location where you will store the value passed in via r0  
+divisor:  output; memory location where you will store the value passed in via r1  
+quotient: output; memory location used to store the result of dividend / divisor  
+                  (integer division); or 0 if there's an error
+mod:      output; memory location used to store the result of dividend % divisor  
+                  (modulus or remainder); or 0 if there's an error
+
+we_have_a_problem: output; store a 1 if there's an error, otherwise store 0.*/
+    
     
     /*** STUDENTS: Place your code BELOW this line!!! **************/
+    
+    /* Store the inputs */
+    ldr r2, =dividend 
+    str r0, [r2]
+    
+    ldr r2, =divisor
+    str r1, [r2]
+    
+    /* Initialize quotient and mod to 0 */
+    ldr r2, =quotient
+    mov r3, 0
+    str r3, [r2]
+    
+    ldr r2, =mod
+    str r3, [r2]
+    
+    /* check for error */
+    cmp r0, 0
+    beq error_cases
+
+    cmp r1, 0
+    beq error_cases
+    
+    /* 99 Problems but this ain't one :D */
+    ldr r2, =we_have_a_problem
+    mov r3, 0
+    str r3, [r2]
+    
+    /* setup registers doing operations */
+    mov r4, r0        /* remainder */
+    movs r5, 0       /*  quotient */
+    
+Division:
+    cmp r4, r1
+    blo Result_processing
+    
+    subs r4, r4, r1
+    adds r5, r5, 1
+    b Division
+    
+Result_processing:
+    /* store final results */
+    ldr r2, =quotient
+    str r5, [r2]
+
+    ldr r2, =mod
+    str r4, [r2]
+
+    /* return address of quotient */
+    ldr r0, =quotient
+    
+    /* Branch to done */
+    b done
+
+error_cases:
+    ldr r2, =we_have_a_problem
+    movs r3, #1
+    str r3, [r2]
+
+    ldr r2, =quotient
+    movs r3, #0
+    str r3, [r2]
+
+    ldr r2, =mod
+    str r3, [r2]
+
+    ldr r0, =quotient
+    
     
     /*** STUDENTS: Place your code ABOVE this line!!! **************/
 
